@@ -24,6 +24,7 @@ and the device private key — never leaves the operator's session and the devic
 | File | Purpose |
 | --- | --- |
 | `EEOP-Gate4-Prepare.ps1` | Prepares one Windows test host for the Gate 4 enrollment, and stops before it |
+| `EEOP-Gate4-Enroll.ps1` | Enrolls that prepared host, then proves the enrolled key with one signed request |
 | `eeop-agent-win-x64.zip` | The self-contained `win-x64` agent, published as a release asset |
 | `SHA256SUMS.txt` | The pinned hashes the script and the operator verify against |
 
@@ -38,14 +39,18 @@ script never proceeds on an unverified artifact.
 
 ```powershell
 (Get-FileHash .\EEOP-Gate4-Prepare.ps1 -Algorithm SHA256).Hash.ToLower()
-(Get-FileHash .\eeop-agent-win-x64.zip  -Algorithm SHA256).Hash.ToLower()
+(Get-FileHash .\EEOP-Gate4-Enroll.ps1  -Algorithm SHA256).Hash.ToLower()
+(Get-FileHash .\eeop-agent-win-x64.zip -Algorithm SHA256).Hash.ToLower()
 ```
 
 Verify `eeop-agent.dll` as well as `eeop-agent.exe`: the `.exe` is the generic .NET apphost launcher and
 carries none of this project's code, so its hash alone would not detect a substituted payload.
 
-## What the script does not do
+## What the scripts do not do
 
-It does not enroll a device, does not provision or read an enrollment token, does not install a Windows
-service, does not start heartbeat or inventory work, and requires no .NET SDK, no .NET runtime and no Azure
-CLI. It writes one sanitized results file and uploads nothing.
+Neither script provisions a token, installs a Windows service, starts heartbeat or inventory work, or requires
+a .NET SDK, a .NET runtime or the Azure CLI. Each writes one sanitized results file and uploads nothing.
+
+The preparation script does not enroll. The enrollment script does enroll, but it cannot fetch a token: the
+token is typed at a masked prompt, held only for the duration of one call, and never written to a file, an
+argument or the results.

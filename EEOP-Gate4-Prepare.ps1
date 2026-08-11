@@ -84,7 +84,7 @@ function Write-ResultFile {
     param([bool] $Passed)
 
     $lines = New-Object System.Collections.Generic.List[string]
-    $lines.Add('EEOP Gate 4 — Windows host preparation') | Out-Null
+    $lines.Add('EEOP Gate 4 - Windows host preparation') | Out-Null
     $lines.Add(('generated: {0:u}' -f (Get-Date).ToUniversalTime())) | Out-Null
     $lines.Add('') | Out-Null
     foreach ($key in $script:results.Keys) {
@@ -328,7 +328,7 @@ $enrolled = $statusOutput -match 'enrolled as device'
 $unenrolled = $statusOutput -match 'holds no device credential'
 
 if ($enrolled) {
-    Add-Result 'enrollment state' 'enrolled — unexpected at this stage'
+    Add-Result 'enrollment state' 'enrolled - unexpected at this stage'
     Add-Failure 'The agent reports a device identity, but preparation must end unenrolled. Nothing was enrolled by this script.'
 }
 elseif ($unenrolled -and $configured -and $statusExit -eq 1) {
