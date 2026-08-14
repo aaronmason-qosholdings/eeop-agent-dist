@@ -1,11 +1,18 @@
 <#
 .SYNOPSIS
-    Prepares one dedicated internal Windows test host for the Sprint 3 Gate 4 enrollment, and stops before it.
+    Prepares one dedicated internal Windows Server host for the Sprint 3 Gate 4 enrollment, and stops before it.
 
 .DESCRIPTION
     Installs the approved self-contained win-x64 agent, verifies it against published hashes, proves the host
     can reach the Development ingestion API, confirms the host holds no device identity and no enrollment
     token, runs 'configure', and records the result.
+
+    The build it installs is the canonical one, which carries both the enrollment path Gate 4 proves and the
+    heartbeat worker Gate 5 proves, so a host is prepared once and needs no second agent installed later.
+
+    The canonical validation host is Windows Server 2025 (a standalone server for the first validation). It
+    runs on Windows Server 2016 or later and on Windows 10/11 equally: nothing here reads an edition, a build
+    number or a product type, and the agent is self-contained, so no runtime is installed.
 
     It does not enroll, does not provision or read a token, does not install a service and does not start
     heartbeat work. It requires no .NET SDK, no .NET runtime and no Azure CLI.
@@ -37,15 +44,17 @@ $ProgressPreference = 'SilentlyContinue'
 
 # Published with the artifact. A mismatch is a hard stop: an unverified agent on a host that is about to hold
 # a device private key is not a thing to shrug at.
-$ExpectedPackageHash = '02878021553aa5d47b405af88256afb86b01bff007f6ca07fe184b460ccb835e'
+# The canonical build is the Gate 5 one: it is a superset of Gate 4's, so preparing a host with it means the
+# host that enrolls is the host that heartbeats, verified against one set of hashes rather than two.
+$ExpectedPackageHash = '7fbbe2a61979776cec428c5502d45be6836d0c6e471e54ee1dfbadf51f14b02f'
 $ExpectedBinaryHashes = [ordered]@{
-    'eeop-agent.exe'     = '234a7feb15bd4ce1d0a5999eed53f5e41864db6612266f63f56c45edb9d4802d'
-    'eeop-agent.dll'     = '97709c2b2862c152c9cdb475bd672c23b00530d25b4d0700ec062c9d361774e4'
-    'EEOP.Contracts.dll' = '3ee7de7edaedbc4e7d0610d5361e6486b2ef1980c06a95536dc96b6339871d1a'
+    'eeop-agent.exe'     = '3016e8a182d1f5db8f91c6b19252941498d0abd1ec8b629134f2d2835d733450'
+    'eeop-agent.dll'     = '89d202e17e71d5329222bb1dfbc2f17a6f2059fe4004462d5e34ad02866516c0'
+    'EEOP.Contracts.dll' = 'fb9cf48c29fe168bd139a1dcb2e88c0bf5f7eb45d01c3003c4fc5a310a8e404b'
 }
-$AgentCommit = 'fcea97b0e73219bc0134d0f76e9d127d2b16184c'
+$AgentCommit = 'ede0a4dbcc87c9bda6a63475acdee9fe0da2aa21'
 $PackageName = 'eeop-agent-win-x64.zip'
-$PackageUrl = 'https://github.com/aaronmason-qosholdings/eeop-agent-dist/releases/download/gate4-fcea97b/eeop-agent-win-x64.zip'
+$PackageUrl = 'https://github.com/aaronmason-qosholdings/eeop-agent-dist/releases/download/gate5-ede0a4d/eeop-agent-win-x64.zip'
 
 $Root = 'C:\ProgramData\EEOP'
 $WorkRoot = Join-Path $Root 'Gate4'

@@ -7,9 +7,10 @@
     Run this only on the host that passed Gate 4, and only against the Development environment. It changes no
     identity: the device this host already is, and the credential it already holds, are what it uses.
 
-    The script installs the approved Gate 5 agent build beside the Gate 4 one, verifies it against published
-    hashes, confirms this host is already enrolled as the expected device, and then runs the real agent runtime
-    - the same `run` path the Windows Service uses - in four phases:
+    The script uses the canonical agent build that Gate 4 preparation already installed - the same package
+    serves both gates - verifies it against published hashes, confirms this host is already enrolled as the
+    expected device, and then runs the real agent runtime, the same `run` path the Windows Service uses, in
+    four phases:
 
       A  first heartbeat      the agent runs until the platform has accepted two beats
       B  restart              the agent is terminated and started again, with no re-enrollment
@@ -28,7 +29,10 @@
     The host is left as it was found: the agent is not running when the script exits, and nothing is installed.
 
 .PARAMETER ExpectedDeviceId
-    The device this host must already be. The run stops before starting the agent if it is anything else.
+    Required. The device this host must already be, as the server-side enrollment evidence reports it. There is
+    deliberately no default: the device a host is expected to be belongs to the run being authorized, not to
+    the script, and a stale default is how a test ends up asserting a machine that no longer exists. The run
+    stops before the agent is started if this host reports any other device.
 
 .PARAMETER PackagePath
     Path to an already-downloaded eeop-agent-win-x64.zip. By default the script downloads the pinned public
@@ -39,12 +43,21 @@
     plus one sweep period, and shortening it will not prove the transition.
 
 .EXAMPLE
-    PS> .\EEOP-Gate5-Heartbeat.ps1
+    PS> .\EEOP-Gate5-Heartbeat.ps1 -ExpectedDeviceId <the device id the enrollment evidence reported>
 #>
 
 [CmdletBinding()]
 param(
-    [string] $ExpectedDeviceId = '90b941bb-2df1-45c2-a73b-e675b46d43af',
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [ValidatePattern('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')]
+    [ValidateScript({
+        if ($_ -eq '00000000-0000-0000-0000-000000000000') {
+            throw 'ExpectedDeviceId must be a real device id, not an empty one.'
+        }
+        $true
+    })]
+    [string] $ExpectedDeviceId,
     [string] $PackagePath,
     [int] $OfflineWaitSeconds = 360
 )
@@ -53,8 +66,8 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
-# The Gate 5 agent build. Different binaries from Gate 4 by necessity - Gate 4's build had no heartbeat in it -
-# and pinned the same way: the package hash before extraction, the binary hashes before execution.
+# The canonical agent build, which Gate 4 preparation installs and this reuses, pinned the same way in both:
+# the package hash before extraction, the binary hashes before execution.
 $AgentCommit = 'ede0a4dbcc87c9bda6a63475acdee9fe0da2aa21'
 $PackageName = 'eeop-agent-win-x64.zip'
 $PackageUrl = 'https://github.com/aaronmason-qosholdings/eeop-agent-dist/releases/download/gate5-ede0a4d/eeop-agent-win-x64.zip'
@@ -199,6 +212,15 @@ function Resolve-AgentPackage {
             throw "The package $PackagePath was not found."
         }
         return (Resolve-Path -LiteralPath $PackagePath).Path
+    }
+
+    # The package Gate 4 preparation downloaded. Since both gates pin the same canonical build, reusing it
+    # means the host holds one agent package rather than two copies of the same bytes - and it is admitted by
+    # the hash below either way, so reuse trusts the file no more than a fresh download would.
+    $prepared = Join-Path (Join-Path $Root 'Gate4') $PackageName
+    if (Test-Path -LiteralPath $prepared) {
+        Write-Host 'using the agent package Gate 4 preparation downloaded'
+        return (Resolve-Path -LiteralPath $prepared).Path
     }
 
     $destination = Join-Path $WorkRoot $PackageName

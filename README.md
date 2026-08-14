@@ -23,16 +23,33 @@ and the device private key — never leaves the operator's session and the devic
 
 | File | Purpose |
 | --- | --- |
-| `EEOP-Gate4-Prepare.ps1` | Prepares one Windows test host for the Gate 4 enrollment, and stops before it |
+| `EEOP-Gate4-Prepare.ps1` | Prepares one Windows Server test host for the Gate 4 enrollment, and stops before it |
 | `EEOP-Gate4-Enroll.ps1` | Enrolls that prepared host, then proves the enrolled key with one signed request |
 | `EEOP-Gate5-Heartbeat.ps1` | Runs the real heartbeat worker on that enrolled host: first beats, restart, silence past the offline threshold, recovery |
 | `eeop-agent-win-x64.zip` | The self-contained `win-x64` agent, published as a release asset |
 | `SHA256SUMS.txt` | The pinned hashes the scripts and the operator verify against |
 
 `eeop-agent-win-x64.zip` is attached to the release rather than committed, because a 34 MB binary in Git
-history is a cost that never goes away. There is one package per gate, under the same name and with different
-hashes: the Gate 4 build (`gate4-fcea97b`) has no heartbeat worker in it, and the Gate 5 build
-(`gate5-ede0a4d`) is what the heartbeat script installs, beside the Gate 4 one rather than over it.
+history is a cost that never goes away.
+
+There is now **one canonical package**, `gate5-ede0a4d`, and both gates use it: it carries the enrollment and
+signed-authentication paths Gate 4 proves *and* the heartbeat worker Gate 5 proves, so the host that enrolls is
+byte-for-byte the host that heartbeats. The earlier `gate4-fcea97b` package is superseded — it predates the
+heartbeat worker — and its hashes stay recorded in `SHA256SUMS.txt` so the first Gate 4 evidence remains
+verifiable, not so it can be run again.
+
+## Canonical validation host
+
+The canonical host is **Windows Server 2025, standalone (not domain-joined) for the first validation**, since
+Windows Server is the primary target. Prerequisites: x64, local administrator, Windows PowerShell 5.1 (present
+on both Full and Core), outbound 443 to the ingestion host and to `github.com`, `raw.githubusercontent.com` and
+`objects.githubusercontent.com`, a clock synchronised within ±300s, and no pre-existing `C:\ProgramData\EEOP`.
+No .NET runtime or SDK is installed and no Azure credential is present on the host.
+
+The first Gate 4 validation ran on a Windows 11 host, which was deliberately reformatted afterwards. That
+evidence stands — enrollment, DPAPI persistence and a signed request were verified on both sides before the
+machine was rebuilt — but the host and its private key no longer exist, so nothing can be re-run against it,
+and its device id appears nowhere in these scripts.
 
 ## Verifying
 
@@ -59,8 +76,10 @@ The preparation script does not enroll. The enrollment script does enroll, but i
 token is typed at a masked prompt, held only for the duration of one call, and never written to a file, an
 argument or the results.
 
-The heartbeat script is the mirror image of that: it refuses to run unless the host is **already** enrolled as
-the device it expects, and it never calls `enroll`. It runs the agent's real `run` host — the same runtime the
+The heartbeat script is the mirror image of that: it **requires** `-ExpectedDeviceId` — there is no default,
+and it refuses to start with none, with a malformed one or with an empty one — it refuses to run unless the
+host is **already** enrolled as exactly that device, and it never calls `enroll`. The identity check happens
+before the agent is started, so a mismatched host runs nothing at all. It runs the agent's real `run` host — the same runtime the
 Windows Service hosts — kills it, waits out the platform's offline threshold and starts it again, and leaves
 the host with no agent running and no service installed. It cannot see a device's `online` or `offline` state,
 because that is the platform's judgment and not the agent's; what it records is the UTC windows the platform's
