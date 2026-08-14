@@ -8,7 +8,7 @@ fb9cf48c29fe168bd139a1dcb2e88c0bf5f7eb45d01c3003c4fc5a310a8e404b  EEOP.Contracts
 
 # Scripts, current — for the Windows Server 2025 canonical host
 12f005a9fd9c4a9ac9513c33fa94375d72e9f6871e33a6cfb3c13cd1298099a7  EEOP-Gate4-Prepare.ps1
-4fd8d2b90535174b31ae18661ae8e470dc5f431142f6f71b022e2a1c318abfa0  EEOP-Gate4-Enroll.ps1
+749d1301b6a5d66d7e7cd80aa1da69ae1e1d0acbfc774df6dd32be6abd70bb52  EEOP-Gate4-Enroll.ps1
 7708794cf383b17808bed202630a330ee4ca8051da532cba3843e3a1eea7bab8  EEOP-Gate5-Heartbeat.ps1
 
 # Superseded, kept so earlier evidence stays verifiable. Do not run these.
@@ -24,3 +24,6 @@ fb9cf48c29fe168bd139a1dcb2e88c0bf5f7eb45d01c3003c4fc5a310a8e404b  EEOP.Contracts
 #   eafd32f11f21eb4b5155fb5663229b1941c08e954b01007b8faa41520e24e173  EEOP-Gate5-Heartbeat.ps1
 # The preparation script before it asserted the hostname, architecture, Windows release and clock:
 #   6171935e379c7ae5cc516705a266184a4ba092665bfb945f0996d2f85daeb9b9  EEOP-Gate4-Prepare.ps1
+# The enrollment script while it still pinned the superseded gate4-fcea97b binaries, which made a host
+# prepared with the canonical package unenrollable:
+#   4fd8d2b90535174b31ae18661ae8e470dc5f431142f6f71b022e2a1c318abfa0  EEOP-Gate4-Enroll.ps1

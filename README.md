@@ -32,6 +32,10 @@ and the device private key — never leaves the operator's session and the devic
 `eeop-agent-win-x64.zip` is attached to the release rather than committed, because a 34 MB binary in Git
 history is a cost that never goes away.
 
+All three scripts pin **the same** package hash and the same three binary hashes, and the platform repository
+fails CI if they ever disagree — preparation once installed the canonical package while enrollment still
+expected the superseded one, which made a correctly prepared host unenrollable at the moment it mattered.
+
 There is now **one canonical package**, `gate5-ede0a4d`, and both gates use it: it carries the enrollment and
 signed-authentication paths Gate 4 proves *and* the heartbeat worker Gate 5 proves, so the host that enrolls is
 byte-for-byte the host that heartbeats. The earlier `gate4-fcea97b` package is superseded — it predates the

@@ -36,13 +36,17 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
-# The same values EEOP-Gate4-Prepare.ps1 installed. Checked again here because enrollment is the step that
-# creates a private key: the binary that generates it has to be the approved one at that moment, not merely
-# at some earlier moment.
+# The one canonical agent build, the same values EEOP-Gate4-Prepare.ps1 extracted and EEOP-Gate5-Heartbeat.ps1
+# reuses, recorded in canonical-agent.json and asserted identical across all three scripts by
+# EEOP-CanonicalAgent.Tests.ps1. Checked again here because enrollment is the step that creates a private key:
+# the binary that generates it has to be the approved one at that moment, not merely at preparation time.
+$AgentCommit = 'ede0a4dbcc87c9bda6a63475acdee9fe0da2aa21'
+$PackageName = 'eeop-agent-win-x64.zip'
+$ExpectedPackageHash = '7fbbe2a61979776cec428c5502d45be6836d0c6e471e54ee1dfbadf51f14b02f'
 $ExpectedBinaryHashes = [ordered]@{
-    'eeop-agent.exe'     = '234a7feb15bd4ce1d0a5999eed53f5e41864db6612266f63f56c45edb9d4802d'
-    'eeop-agent.dll'     = '97709c2b2862c152c9cdb475bd672c23b00530d25b4d0700ec062c9d361774e4'
-    'EEOP.Contracts.dll' = '3ee7de7edaedbc4e7d0610d5361e6486b2ef1980c06a95536dc96b6339871d1a'
+    'eeop-agent.exe'     = '3016e8a182d1f5db8f91c6b19252941498d0abd1ec8b629134f2d2835d733450'
+    'eeop-agent.dll'     = '89d202e17e71d5329222bb1dfbc2f17a6f2059fe4004462d5e34ad02866516c0'
+    'EEOP.Contracts.dll' = 'fb9cf48c29fe168bd139a1dcb2e88c0bf5f7eb45d01c3003c4fc5a310a8e404b'
 }
 $ExpectedTokenLength = 43
 
@@ -132,6 +136,8 @@ function Complete-Run {
 
 Add-Result 'reference' $RunId
 Add-Result 'hostname' $env:COMPUTERNAME
+Add-Result 'expected agent commit' $AgentCommit
+Add-Result 'expected agent package' ('{0} (sha256 {1})' -f $PackageName, $ExpectedPackageHash)
 
 $identity = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
 if (-not $identity.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -164,8 +170,9 @@ foreach ($name in $ExpectedBinaryHashes.Keys) {
 }
 if ($mismatched.Count -gt 0) {
     Add-Result 'binaries verified' 'no'
-    Add-Failure ('The installed binaries do not match the approved artifact: {0}. Nothing was enrolled.' -f
-        ($mismatched -join '; '))
+    Add-Failure (('The installed binaries do not match the approved artifact {0}: {1}. Nothing was enrolled. ' -f
+            $PackageName, ($mismatched -join '; ')) +
+        'Re-run EEOP-Gate4-Prepare.ps1 from the same published set as this script, so both pin the same build.')
     Complete-Run
 }
 Add-Result 'binaries verified' ('yes ({0})' -f ($ExpectedBinaryHashes.Keys -join ', '))
