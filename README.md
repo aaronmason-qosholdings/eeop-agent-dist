@@ -23,7 +23,7 @@ and the device private key — never leaves the operator's session and the devic
 
 | File | Purpose |
 | --- | --- |
-| `EEOP-Gate4-Prepare.ps1` | Prepares one Windows Server test host for the Gate 4 enrollment, and stops before it |
+| `EEOP-Gate4-Prepare.ps1` | Prepares the canonical Windows Server 2025 host for the Gate 4 enrollment, refusing any other host, and stops before enrolling |
 | `EEOP-Gate4-Enroll.ps1` | Enrolls that prepared host, then proves the enrolled key with one signed request |
 | `EEOP-Gate5-Heartbeat.ps1` | Runs the real heartbeat worker on that enrolled host: first beats, restart, silence past the offline threshold, recovery |
 | `eeop-agent-win-x64.zip` | The self-contained `win-x64` agent, published as a release asset |
@@ -40,11 +40,18 @@ verifiable, not so it can be run again.
 
 ## Canonical validation host
 
-The canonical host is **Windows Server 2025, standalone (not domain-joined) for the first validation**, since
-Windows Server is the primary target. Prerequisites: x64, local administrator, Windows PowerShell 5.1 (present
-on both Full and Core), outbound 443 to the ingestion host and to `github.com`, `raw.githubusercontent.com` and
-`objects.githubusercontent.com`, a clock synchronised within ±300s, and no pre-existing `C:\ProgramData\EEOP`.
-No .NET runtime or SDK is installed and no Azure credential is present on the host.
+The canonical host is **`EEOP-SRV2025-01`, Windows Server 2025, standalone (not domain-joined) for the first
+validation**, since Windows Server is the primary target. Prerequisites: x64, local administrator, Windows
+PowerShell 5.1 (present on both Full and Core), outbound 443 to the ingestion host and to `github.com`,
+`raw.githubusercontent.com` and `objects.githubusercontent.com`, a synchronised clock, and no pre-existing
+`C:\ProgramData\EEOP`. No .NET runtime or SDK is installed and no Azure credential is present on the host.
+
+The preparation script **asserts** those it can, before it downloads or extracts anything: elevation, the
+hostname (`-ExpectedHostname` to name a different canonical host, deliberately explicit), an `AMD64`
+architecture, a `Windows Server 2025` caption with a server product type — no build number is matched, since
+servicing moves it — and a clock within **±120s** of the platform's own, read from the `Date` header of
+`/health/live`. That bound is tighter than the ±300s device authentication allows, so drift is found before a
+single-use enrollment token is spent on it. Nothing adjusts the clock or the Windows Time service.
 
 The first Gate 4 validation ran on a Windows 11 host, which was deliberately reformatted afterwards. That
 evidence stands — enrollment, DPAPI persistence and a signed request were verified on both sides before the
