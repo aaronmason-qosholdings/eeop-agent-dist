@@ -1,6 +1,15 @@
+# Gate 4 — enrollment (eeop-platform fcea97b, release gate4-fcea97b)
 ffdb8394a177703b5794f0bbaa4fdc6271cbdf4ec50adc1ed962c7ff46654f7d  EEOP-Gate4-Prepare.ps1
 4fd8d2b90535174b31ae18661ae8e470dc5f431142f6f71b022e2a1c318abfa0  EEOP-Gate4-Enroll.ps1
 02878021553aa5d47b405af88256afb86b01bff007f6ca07fe184b460ccb835e  eeop-agent-win-x64.zip
 234a7feb15bd4ce1d0a5999eed53f5e41864db6612266f63f56c45edb9d4802d  eeop-agent.exe
 97709c2b2862c152c9cdb475bd672c23b00530d25b4d0700ec062c9d361774e4  eeop-agent.dll
 3ee7de7edaedbc4e7d0610d5361e6486b2ef1980c06a95536dc96b6339871d1a  EEOP.Contracts.dll
+
+# Gate 5C — heartbeat (eeop-platform ede0a4d, release gate5-ede0a4d)
+# A different agent build by necessity: the Gate 4 one had no heartbeat worker in it.
+eafd32f11f21eb4b5155fb5663229b1941c08e954b01007b8faa41520e24e173  EEOP-Gate5-Heartbeat.ps1
+7fbbe2a61979776cec428c5502d45be6836d0c6e471e54ee1dfbadf51f14b02f  eeop-agent-win-x64.zip
+3016e8a182d1f5db8f91c6b19252941498d0abd1ec8b629134f2d2835d733450  eeop-agent.exe
+89d202e17e71d5329222bb1dfbc2f17a6f2059fe4004462d5e34ad02866516c0  eeop-agent.dll
+fb9cf48c29fe168bd139a1dcb2e88c0bf5f7eb45d01c3003c4fc5a310a8e404b  EEOP.Contracts.dll
