@@ -36,11 +36,13 @@ All three scripts pin **the same** package hash and the same three binary hashes
 fails CI if they ever disagree — preparation once installed the canonical package while enrollment still
 expected the superseded one, which made a correctly prepared host unenrollable at the moment it mattered.
 
-There is now **one canonical package**, `gate5-ede0a4d`, and both gates use it: it carries the enrollment and
-signed-authentication paths Gate 4 proves *and* the heartbeat worker Gate 5 proves, so the host that enrolls is
-byte-for-byte the host that heartbeats. The earlier `gate4-fcea97b` package is superseded — it predates the
-heartbeat worker — and its hashes stay recorded in `SHA256SUMS.txt` so the first Gate 4 evidence remains
-verifiable, not so it can be run again.
+There is **one canonical package**, `ws3b-524a915`, and every script uses it: it carries the enrollment and
+signed-authentication paths Gate 4 proves *and* the heartbeat worker Gate 5 proves, and it runs as a Windows
+service installed under Program Files, so the host that enrolls is byte-for-byte the host that heartbeats. The
+earlier `gate5-ede0a4d` and `gate4-fcea97b` packages are superseded — the first predates the service and the
+Program Files installation, the second predates the heartbeat worker as well — and their hashes stay recorded
+in `SHA256SUMS.txt`, with their releases still published, so the earlier Gate 4 and Gate 5 evidence remains
+verifiable, not so they can be run again.
 
 ## Canonical validation host
 

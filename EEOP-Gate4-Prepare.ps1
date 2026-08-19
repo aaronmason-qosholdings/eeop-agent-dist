@@ -140,17 +140,17 @@ $ProgressPreference = 'SilentlyContinue'
 
 # Published with the artifact. A mismatch is a hard stop: an unverified agent on a host that is about to hold
 # a device private key is not a thing to shrug at.
-# The canonical build is the Gate 5 one: it is a superset of Gate 4's, so preparing a host with it means the
-# host that enrolls is the host that heartbeats, verified against one set of hashes rather than two.
-$ExpectedPackageHash = '7fbbe2a61979776cec428c5502d45be6836d0c6e471e54ee1dfbadf51f14b02f'
+# The canonical build is a superset of what any one gate needs, so preparing a host with it means the host
+# that enrolls is the host that heartbeats, verified against one set of hashes rather than two.
+$ExpectedPackageHash = '661b372924c6f9a4ad31f7a95c7e19890cc8b4cb75d8828b850d1c0ee9062e85'
 $ExpectedBinaryHashes = [ordered]@{
-    'eeop-agent.exe'     = '3016e8a182d1f5db8f91c6b19252941498d0abd1ec8b629134f2d2835d733450'
-    'eeop-agent.dll'     = '89d202e17e71d5329222bb1dfbc2f17a6f2059fe4004462d5e34ad02866516c0'
-    'EEOP.Contracts.dll' = 'fb9cf48c29fe168bd139a1dcb2e88c0bf5f7eb45d01c3003c4fc5a310a8e404b'
+    'eeop-agent.exe'     = '5d623126326792d04bb26ac5455d3a5c68443c7effb6b3911778b89cadaaf04e'
+    'eeop-agent.dll'     = 'f6b40e3a1cd25d43982aaed67248215428a7d680b70823344fd1e78b01f62c5a'
+    'EEOP.Contracts.dll' = 'aba8ec90b3afab30bf1e33b587d27d1dc4ab22c88dc87f3f455e72c7edeae263'
 }
-$AgentCommit = 'ede0a4dbcc87c9bda6a63475acdee9fe0da2aa21'
+$AgentCommit = '524a91569bc88a2a4b2af256ae225c4b4bcdccc4'
 $PackageName = 'eeop-agent-win-x64.zip'
-$PackageUrl = 'https://github.com/aaronmason-qosholdings/eeop-agent-dist/releases/download/gate5-ede0a4d/eeop-agent-win-x64.zip'
+$PackageUrl = 'https://github.com/QOS-Holdings/eeop-agent-dist/releases/download/ws3b-524a915/eeop-agent-win-x64.zip'
 
 $Root = 'C:\ProgramData\EEOP'
 $WorkRoot = Join-Path $Root 'Gate4'
