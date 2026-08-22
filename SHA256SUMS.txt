@@ -1,19 +1,31 @@
-# Canonical agent package (eeop-platform 524a915, release ws3b-524a915)
-# The artifact the WS3B rotation published: the agent runs as a Windows service, installs into Program Files
-# without costing a host the device identity and state it already has, and collects the core inventory, as
-# well as carrying the enrollment path Gate 4 proves and the heartbeat worker Gate 5 proves. One build, one
-# host, one set of hashes.
-661b372924c6f9a4ad31f7a95c7e19890cc8b4cb75d8828b850d1c0ee9062e85  eeop-agent-win-x64.zip
-5d623126326792d04bb26ac5455d3a5c68443c7effb6b3911778b89cadaaf04e  eeop-agent.exe
-f6b40e3a1cd25d43982aaed67248215428a7d680b70823344fd1e78b01f62c5a  eeop-agent.dll
-aba8ec90b3afab30bf1e33b587d27d1dc4ab22c88dc87f3f455e72c7edeae263  EEOP.Contracts.dll
+# Canonical agent package (eeop-platform ff7a8cd, release gateb1-ff7a8cd)
+# The artifact the Gate B1 rotation published: the agent runs as a Windows service, installs into Program
+# Files without costing a host the device identity and state it already has, and collects every inventory
+# merged through Sprint 7 — core, software, Windows servicing and identity — as well as carrying the
+# enrollment path Gate 4 proves and the heartbeat worker Gate 5 proves. One build, one host, one set of
+# hashes.
+82c4a3354fda759a454c266091df1b4cf77f98f4d10481f1b8936b7754b80eac  eeop-agent-win-x64.zip
+8f5f61451dc30302f42f64dc95ae8f283e0b9ef9774b277e6d999bce2a721232  eeop-agent.exe
+b0e37d337deb61bdcffa7b8f8a84f496a78713bf3c8e2085331f1a41bec30924  eeop-agent.dll
+908207b8c5076dde21618ca851e037ad436b98c2cc71d6736387444d58e2cdb9  EEOP.Contracts.dll
 
 # Scripts, current — for the Windows Server 2025 canonical host
-eaff35eb55f1080fa5bf6802f866cec270a4ebaf368c14c278e82738cfa8b2cd  EEOP-Gate4-Prepare.ps1
-a281aeb39766332b23f310186209a089722cb43c636818fd421fc419e8256cc1  EEOP-Gate4-Enroll.ps1
-eac9d3cb2c34f405e7d8ca3d978001aba99b7accf270684e23b750c5be5ac773  EEOP-Gate5-Heartbeat.ps1
+2cad32a385ab8dd99083b1f675a096ec89b382d4ad79efadc1a65495d2f3e00e  EEOP-Gate4-Prepare.ps1
+8dbdbdf4a93dec0eb870aada0b00fc94feb588b6083a05815654ff9dd2062e47  EEOP-Gate4-Enroll.ps1
+34418afe9a10649ade15fcce1bc1e52f3b5eb8dfad7eaa0ce6435e2f26778893  EEOP-Gate5-Heartbeat.ps1
 
 # Superseded, kept so earlier evidence stays verifiable. Do not run these.
+# ws3b-524a915 package (eeop-platform 524a915), superseded by the Gate B1 rotation: it predates the
+# Sprint 5-7 collectors, so a host running it reports core inventory and nothing else. Its release remains
+# published.
+#   661b372924c6f9a4ad31f7a95c7e19890cc8b4cb75d8828b850d1c0ee9062e85  eeop-agent-win-x64.zip
+#   5d623126326792d04bb26ac5455d3a5c68443c7effb6b3911778b89cadaaf04e  eeop-agent.exe
+#   f6b40e3a1cd25d43982aaed67248215428a7d680b70823344fd1e78b01f62c5a  eeop-agent.dll
+#   aba8ec90b3afab30bf1e33b587d27d1dc4ab22c88dc87f3f455e72c7edeae263  EEOP.Contracts.dll
+# Scripts as they stood while they pinned that package:
+#   eaff35eb55f1080fa5bf6802f866cec270a4ebaf368c14c278e82738cfa8b2cd  EEOP-Gate4-Prepare.ps1
+#   a281aeb39766332b23f310186209a089722cb43c636818fd421fc419e8256cc1  EEOP-Gate4-Enroll.ps1
+#   eac9d3cb2c34f405e7d8ca3d978001aba99b7accf270684e23b750c5be5ac773  EEOP-Gate5-Heartbeat.ps1
 # gate5-ede0a4d package (eeop-platform ede0a4d), superseded by the WS3B rotation: it predates the Windows
 # service, the Program Files installation and the core inventory collector. Its release remains published.
 #   7fbbe2a61979776cec428c5502d45be6836d0c6e471e54ee1dfbadf51f14b02f  eeop-agent-win-x64.zip
